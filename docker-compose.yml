@@ -82,8 +82,8 @@ services:
       - /media/${NAME}/transmission/watch:/watch
     ports:
       - ${PORT_RPC_TRANSMISSION}:9091
-      - ${PORT_TCP_TRANSMISSION}:51413
-      - ${PORT_UDP_TRANSMISSION}:51413/udp
+      - ${PORT_TRANSMISSION}:51413
+      - ${PORT_TRANSMISSION}:51413/udp
     restart: unless-stopped
     networks:
       default:
