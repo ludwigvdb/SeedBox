@@ -2,15 +2,98 @@ version: "2"
 services:
   sonarr:
     image: linuxserver/sonarr
-    container_name: %NAME%_sonarr
+    container_name: ${NAME}_sonarr
     environment:
       - PUID=2001
       - PGID=2001
       - TZ=Europe/Paris
     volumes:
-      - /media/test/sonarr/config:/config
-      - /media/test/seedbox/media/Series:/tv
-      - /media/test/seedbox/downloads:/downloads
+      - /media/${NAME}/sonarr/config:/config
+      - /media/${NAME}/seedbox/media/Series:/tv
+      - /media/${NAME}/seedbox/downloads:/downloads
     ports:
-      - 8999:8989
+      - ${PORT_SONARR}:8989
     restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.${SOUS_RESEAU}.0.3
+  radarr:
+    image: linuxserver/radarr
+    container_name: ${NAME}_radarr
+    environment:
+      - PUID=2001
+      - PGID=2001
+      - TZ=Europe/Paris
+    volumes:
+      - /media/${NAME}/radarr/config:/config
+      - /media/${NAME}/seedbox/media/Films:/movies
+      - /media/${NAME}/seedbox/downloads:/downloads
+    ports:
+      - ${PORT_RADARR}:7878
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.${SOUS_RESEAU}.0.4
+  lidarr:
+    image: linuxserver/lidarr
+    container_name: ${NAME}_lidarr
+    environment:
+      - PUID=2001
+      - PGID=2001
+      - TZ=Europe/Paris
+    volumes:
+      - /media/${NAME}/lidarr/config:/config
+      - /media/${NAME}/seedbox/media/Musique:/music
+      - /media/${NAME}/seedbox/downloads:/downloads
+    ports:
+      - ${PORT_LIDARR}:8686
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.${SOUS_RESEAU}.0.5
+  jackett:
+    image: linuxserver/jackett
+    container_name: ${NAME}_jackett
+    environment:
+      - PUID=2001
+      - PGID=2001
+      - TZ=Europe/Paris
+    volumes:
+      - /media/${NAME}/jackett/config:/config
+      - /media/${NAME}/transmission/watch:/downloads
+    ports:
+      - ${PORT_JACKETT}:9117
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.${SOUS_RESEAU}.0.6
+  transmission:
+    image: linuxserver/transmission
+    container_name: ${NAME}_transmission
+    environment:
+      - PUID=2001
+      - PGID=2001
+      - TZ=Europe/Paris
+      - USER=${NAME}
+      - PASS=${PASSWORD}
+    volumes:
+      - /media/${NAME}/transmission/config:/config
+      - /media/${NAME}/seedbox/downloads:/downloads
+      - /media/${NAME}/transmission/watch:/watch
+    ports:
+      - ${PORT_RPC_TRANSMISSION}:9091
+      - ${PORT_TCP_TRANSMISSION}:51413
+      - ${PORT_UDP_TRANSMISSION}:51413/udp
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.${SOUS_RESEAU}.0.2
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.${SOUS_RESEAU}.0.0/16
+        gateway: 172.${SOUS_RESEAU}.0.1
