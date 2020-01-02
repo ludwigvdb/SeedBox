@@ -9,8 +9,7 @@ services:
       - TZ=Europe/Paris
     volumes:
       - /media/${NAME}/sonarr/config:/config
-      - /media/${NAME}/seedbox/media/Series:/tv
-      - /media/${NAME}/seedbox/downloads:/downloads
+      - /media/${NAME}/seedbox/:/seedbox
     ports:
       - ${PORT_SONARR}:8989
     restart: unless-stopped
@@ -26,8 +25,7 @@ services:
       - TZ=Europe/Paris
     volumes:
       - /media/${NAME}/radarr/config:/config
-      - /media/${NAME}/seedbox/media/Films:/movies
-      - /media/${NAME}/seedbox/downloads:/downloads
+      - /media/${NAME}/seedbox/:/seedbox
     ports:
       - ${PORT_RADARR}:7878
     restart: unless-stopped
@@ -43,8 +41,7 @@ services:
       - TZ=Europe/Paris
     volumes:
       - /media/${NAME}/lidarr/config:/config
-      - /media/${NAME}/seedbox/media/Musique:/music
-      - /media/${NAME}/seedbox/downloads:/downloads
+      - /media/${NAME}/seedbox/:/seedbox
     ports:
       - ${PORT_LIDARR}:8686
     restart: unless-stopped
